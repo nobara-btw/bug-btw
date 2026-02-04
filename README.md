@@ -4,8 +4,8 @@
 ---
 
 usage on terminal: 
-chmod +x bash.sh
-./bash.sh
+> chmod +x bash.sh
+> ./bash.sh
 
 ---
 
