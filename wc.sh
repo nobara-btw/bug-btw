@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
-
 RED='\033[1;31m'
 GREEN='\033[1;32m'
 YELLOW='\033[1;33m'
@@ -9,10 +7,8 @@ BLUE='\033[1;34m'
 WHITE='\033[1;37m'
 NC='\033[0m'
 BOLD='\033[1m'
-
 MODULE="uvcvideo"
 BLACKLIST_FILE="/etc/modprobe.d/disable-webcam.conf"
-
 confirm() {
     local prompt="$1"
     local choice=0
@@ -40,18 +36,15 @@ confirm() {
         fi
     done
 }
-
 get_webcam_status() {
     local is_loaded=$(lsmod | grep -q "^$MODULE " && echo 0 || echo 1)
     local is_blacklisted=$([ -f "$BLACKLIST_FILE" ] && grep -q "blacklist $MODULE" "$BLACKLIST_FILE" && echo 0 || echo 1)
-    
     if [ $is_loaded -ne 0 ] && [ $is_blacklisted -eq 0 ]; then
         echo "DESATIVADA"
     else
         echo "ATIVADA"
     fi
 }
-
 print_header() {
     local status=$(get_webcam_status)
     clear
@@ -59,84 +52,115 @@ print_header() {
     echo -e "${WHITE}Status atual: ${YELLOW}$status${NC}"
     echo ""
 }
-
-check_root() {
-    if [ "$EUID" -ne 0 ]; then
-        echo -e "${RED}Execute com sudo: sudo ./wc.sh${NC}"
-        exit 1
-    fi
-}
-
 disable_webcam() {
     local status=$(get_webcam_status)
-    
     if [ "$status" = "DESATIVADA" ]; then
         echo -e "${YELLOW}Webcam já está desativada${NC}"
         return
     fi
-    
     if ! confirm "Desativar webcam? (mata processos e bloqueia)"; then
         echo -e "${RED}Operação cancelada${NC}"
         return
     fi
-    
     clear
     echo -e "${WHITE}Desativando webcam...${NC}"
-    
-    fuser -k /dev/video* 2>/dev/null || true
-    rmmod -f $MODULE 2>/dev/null || true
-    echo "blacklist $MODULE" > $BLACKLIST_FILE
-    dracut -f 2>/dev/null || update-initramfs -u 2>/dev/null || true
-    
-    if lsmod | grep -q $MODULE; then
-        echo -e "${RED}✗ Módulo ainda carregado. Reinicie o sistema${NC}"
+
+    # Mata processos usando /dev/video* e /dev/media* de forma segura (sem travar)
+    echo -e "${WHITE}  → Encerrando processos com acesso à câmera...${NC}"
+    for dev in /dev/video* /dev/media*; do
+        [ -e "$dev" ] || continue
+        local pids
+        pids=$(sudo fuser "$dev" 2>/dev/null) || true
+        for pid in $pids; do
+            sudo kill -TERM "$pid" 2>/dev/null || true
+        done
+    done
+    sleep 1
+    # SIGKILL nos que não responderam
+    for dev in /dev/video* /dev/media*; do
+        [ -e "$dev" ] || continue
+        local pids
+        pids=$(sudo fuser "$dev" 2>/dev/null) || true
+        for pid in $pids; do
+            sudo kill -KILL "$pid" 2>/dev/null || true
+        done
+    done
+    sleep 1
+
+    # Descarrega módulos dependentes antes do principal (ordem importa)
+    echo -e "${WHITE}  → Descarregando módulos do kernel...${NC}"
+    for dep in uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common videodev mc; do
+        sudo rmmod "$dep" 2>/dev/null || true
+    done
+
+    # Grava blacklist para persistir no próximo boot
+    echo -e "${WHITE}  → Aplicando blacklist...${NC}"
+    echo "blacklist $MODULE" | sudo tee $BLACKLIST_FILE > /dev/null
+
+    # Recarrega regras udev para impedir recarregamento automático
+    sudo udevadm control --reload-rules 2>/dev/null || true
+
+    if lsmod | grep -q "^$MODULE "; then
+        echo -e "${YELLOW}⚠ Módulo ainda carregado (processo preso). Blacklist aplicada: reinicie para desativar completamente.${NC}"
     else
-        echo -e "${GREEN}✓ Webcam desativada${NC}"
+        echo -e "${GREEN}✓ Webcam desativada com sucesso (blacklist aplicada, persiste após reboot)${NC}"
     fi
 }
-
 enable_webcam() {
     local status=$(get_webcam_status)
-    
     if [ "$status" = "ATIVADA" ]; then
         echo -e "${YELLOW}Webcam já está ativada${NC}"
         return
     fi
-    
     if ! confirm "Ativar webcam? (libera uso)"; then
         echo -e "${RED}Operação cancelada${NC}"
         return
     fi
-    
     clear
     echo -e "${WHITE}Ativando webcam...${NC}"
-    
-    rm -f $BLACKLIST_FILE
-    dracut -f 2>/dev/null || update-initramfs -u 2>/dev/null || true
-    modprobe $MODULE 2>/dev/null || true
-    
-    if lsmod | grep -q $MODULE; then
+
+    # Remove blacklist
+    echo -e "${WHITE}  → Removendo blacklist...${NC}"
+    sudo rm -f $BLACKLIST_FILE
+    sudo udevadm control --reload-rules 2>/dev/null || true
+
+    # Tenta carregar o módulo, mostrando erro real se falhar
+    echo -e "${WHITE}  → Carregando módulo...${NC}"
+    if sudo modprobe $MODULE; then
         echo -e "${GREEN}✓ Webcam ativada${NC}"
     else
-        echo -e "${RED}✗ Módulo não carregou. Reinicie o sistema${NC}"
+        echo -e "${YELLOW}modprobe falhou, tentando insmod direto...${NC}"
+        local ko_path
+        ko_path=$(find /lib/modules/$(uname -r) -name "${MODULE}.ko*" 2>/dev/null | head -n1)
+        if [ -n "$ko_path" ]; then
+            sudo insmod "$ko_path" 2>/dev/null || true
+        fi
+
+        if lsmod | grep -q "^$MODULE "; then
+            echo -e "${GREEN}✓ Webcam ativada via insmod${NC}"
+        else
+            echo -e "${RED}✗ Módulo não carregou.${NC}"
+            echo -e "${YELLOW}Diagnóstico:${NC}"
+            echo -e "  Kernel: $(uname -r)"
+            echo -e "  Módulo disponível: $(find /lib/modules/$(uname -r) -name "${MODULE}.ko*" 2>/dev/null | head -n1 || echo 'NÃO ENCONTRADO')"
+            echo -e "  Erro modprobe:"
+            sudo modprobe $MODULE 2>&1 | sed 's/^/    /' || true
+            echo ""
+            echo -e "${YELLOW}Se o módulo não existe, a webcam pode estar desabilitada na BIOS/UEFI ou não suportada.${NC}"
+            echo -e "${YELLOW}Tente reiniciar o sistema.${NC}"
+        fi
     fi
 }
-
 main() {
-    check_root
     print_header
-    
     if confirm "Desativar webcam? (NÃO = ativar)"; then
         disable_webcam
     else
         enable_webcam
     fi
-    
     echo ""
     read -n1 -s -r -p "Pressione qualquer tecla para sair..."
     clear
 }
-
 trap 'echo -e "\n${RED}Erro detectado${NC}"; exit 1' ERR
-
 main
