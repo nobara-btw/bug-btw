@@ -1,11 +1,11 @@
-# 🐧 Nobara Linux Utilities
+# 🐧 bug-btw Utilities
 
-[![Linux](https://img.shields.io/badge/Linux-Nobara-blue?logo=linux&logoColor=white)](https://nobaraproject.org/)
+[![Linux](https://img.shields.io/badge/Linux--blue?logo=linux&logoColor=white)](https://project.org/)
 [![Shell Script](https://img.shields.io/badge/Shell-Bash-green?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/rufusg08/nobara-btw/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/rufusg08/-btw/graphs/commit-activity)
 
-> 🛠️ Scripts inteligentes para otimização e recuperação do Nobara Linux (IdeaPad 330 15IKB)
+Linux (Intel-AMD - x64-x86)
 
 ---
 
@@ -13,7 +13,7 @@
 
 - [Scripts Disponíveis](#-scripts-disponíveis)
   - [🧹 ck.sh - Clean Kernel](#-cksh---clean-kernel)
-  - [🔧 fixboot.sh - Fix Boot Intel UHD 620](#-fixbootsh---fix-boot-intel-uhd-620)
+  - [🔧 fixboot.sh - Fix Boot Intel](#-fixbootsh---fix-boot-intel)
   - [📹 wc.sh - Webcam Controller](#-wcsh---webcam-controller)
 - [Configurações EasyEffects](#-configurações-easyeffects)
 - [Instalação](#-instalação)
@@ -24,7 +24,7 @@
 
 ### 🧹 `ck.sh` - Clean Kernel
 
-Limpeza inteligente do sistema Nobara.
+Limpeza inteligente do sistema .
 
 **Funcionalidades:**
 - Remove kernels antigos (mantém atual + backup)
@@ -40,14 +40,14 @@ chmod +x ck.sh && ./ck.sh
 
 ---
 
-### 🔧 `fixboot.sh` - Fix Boot Intel UHD 620
+### 🔧 `fixboot.sh` - Fix Boot Intel
 
 **⚠️ CORREÇÃO PARA TELA PRETA APÓS UPDATES** (Lenovo IdeaPad 330 15IKB 81FE)
 
 #### 🚨 Quando usar:
 - Tela preta com `_` piscando após GRUB
 - Sistema não inicia após `dnf update`
-- Intel UHD 620 com conflitos no kernel
+- Intel com conflitos no kernel
 
 #### 📝 Como usar (PASSO A PASSO):
 
@@ -112,7 +112,7 @@ chmod +x wc.sh && ./wc.sh
 
 ## 🎵 Configurações EasyEffects
 
-Perfis de áudio otimizados para Nobara.
+Perfis de áudio otimizados para .
 
 ### 📁 Localização
 ```
@@ -145,8 +145,8 @@ cp Mic.json ~/.var/app/com.github.wwmm.easyeffects/data/easyeffects/input/
 ## 📥 Instalação
 ```bash
 # Clone o repositório
-git clone https://github.com/rufusg08/nobara-btw.git
-cd nobara-btw
+git clone https://github.com/rufusg08/-btw.git
+cd -btw
 
 # Torne scripts executáveis
 chmod +x ck.sh fixboot.sh wc.sh
@@ -160,7 +160,7 @@ cp Mic.json ~/.var/app/com.github.wwmm.easyeffects/data/easyeffects/input/
 
 ## ⚙️ Requisitos
 
-**Sistema:** Nobara Linux 38+ / Fedora / KDE Plasma
+**Sistema:** Linux 38+ / Fedora / KDE Plasma
 
 **Dependências:**
 ```bash
@@ -186,19 +186,12 @@ MIT License - Veja [LICENSE](LICENSE)
 
 ---
 
-## 📞 Suporte
-
-- 🐛 [Issues](https://github.com/rufusg08/nobara-btw/issues)
-- 💬 [Discussions](https://github.com/rufusg08/nobara-btw/discussions)
-
----
-
 <div align="center">
 
 **⭐ Se ajudou, deixe uma estrela! ⭐**
 
-Feito com ❤️ para Nobara Linux | Testado em IdeaPad 330 15IKB
+Feito com ❤️ | Testado em IdeaPad 330 15IKB tunado
 
-[⬆ Voltar ao topo](#-nobara-linux-utilities)
+[⬆ Voltar ao topo](#--linux-utilities)
 
 </div>
