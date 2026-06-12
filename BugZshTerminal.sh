@@ -67,6 +67,7 @@ bindkey '^U' kill-whole-line
 bindkey '^W' backward-kill-word
 bindkey '^n' autosuggest-accept
 bindkey '^j' autosuggest-accept
+bindkey '^[^?' backward-kill-word
 
 # ============================================================
 # FZF
@@ -82,7 +83,7 @@ fi
 alias ll='ls -lAhS'
 alias la='ls -lah'
 alias l='ls -CF'
-alias cls='clear'
+alias cl='clear'
 alias update='sudo pacman -Syu'
 alias install='sudo pacman -S'
 alias remove='sudo pacman -R'
