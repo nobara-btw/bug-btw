@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/rufusg08/-btw/graphs/commit-activity)
 
-Linux (Intel - x64-x86)
+Arch Linux / Windows 10|11 (Intel- x64-x86)
 
 ---
 
