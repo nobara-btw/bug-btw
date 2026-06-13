@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/rufusg08/-btw/graphs/commit-activity)
 
-Linux (Intel-AMD - x64-x86)
+Linux (Intel - x64-x86)
 
 ---
 
@@ -42,7 +42,7 @@ chmod +x ck.sh && ./ck.sh
 
 ### 🔧 `fixboot.sh` - Fix Boot Intel
 
-**⚠️ CORREÇÃO PARA TELA PRETA APÓS UPDATES** (Lenovo IdeaPad 330 15IKB 81FE)
+**⚠️ CORREÇÃO PARA TELA PRETA APÓS UPDATES** 
 
 #### 🚨 Quando usar:
 - Tela preta com `_` piscando após GRUB
@@ -160,30 +160,13 @@ cp Mic.json ~/.var/app/com.github.wwmm.easyeffects/data/easyeffects/input/
 
 ## ⚙️ Requisitos
 
-**Sistema:** Linux 38+ / Fedora / KDE Plasma
+**Sistema:** LinuxKernel/WindowsOS / KDE Plasma WM
 
 **Dependências:**
 ```bash
-sudo dnf install dnf-utils v4l-utils
 flatpak install flathub com.github.wwmm.easyeffects
+bash, ./, Konsole (Terminal).
 ```
-
----
-
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie branch: `git checkout -b feature/NovaFuncionalidade`
-3. Commit: `git commit -m 'Add feature'`
-4. Push: `git push origin feature/NovaFuncionalidade`
-5. Abra Pull Request
-
----
-
-## 📜 Licença
-
-MIT License - Veja [LICENSE](LICENSE)
-
 ---
 
 <div align="center">
