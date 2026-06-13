@@ -1,6 +1,7 @@
 # 🐧 bug-btw Utilities
 
 [![Linux](https://img.shields.io/badge/Linux--blue?logo=linux&logoColor=white)](https://project.org/)
+[![Windows](https://img.shields.io/badge/Windows--blue?logo=Windows&logoColor=white)](https://project.org/)
 [![Shell Script](https://img.shields.io/badge/Shell-Bash-green?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/rufusg08/-btw/graphs/commit-activity)
